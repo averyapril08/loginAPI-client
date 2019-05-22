@@ -1,4 +1,4 @@
-import {ADD_ITEM,GET_ITEMS} from '../actions/types';
+import {ADD_ITEM,GET_ITEMS,DELETE_ITEMS} from '../actions/types';
 const initialState=[];
  
 
@@ -15,6 +15,9 @@ export default function (state=initialState,action){
         return [
             ...state,action.payload
         ]
+
+        case DELETE_ITEMS :
+        return state.filter(item => item._id !== action.payload);
 
         default:
         return state;

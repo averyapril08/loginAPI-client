@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { addItem, getItems } from '../actions/itemAction';
+import { addItem, getItems,delItem} from '../actions/itemAction';
+import { addLog } from '../actions/logAction';
 import './MainPage.scss';
 
 
@@ -26,12 +27,18 @@ class MainPage extends Component {
         e.preventDefault();
         const { inputText, columnNum } = this.state;
         const newItem = { inputText, columnNum };
+        const txt={text: inputText+" is added in column " + columnNum} ;
         this.props.addItem(newItem);
+        this.props.addLog(txt);
+
     }
-    searchSubmit = (e) => {
-        e.preventDefault();
-        const { searchText } = this.state;
+
+    delete = (id,txt,col)=>{
+          this.props.delItem(id);
+          const text= {text: txt+" in column " + col +" is deleted."}
+          this.props.addLog(text);    
     }
+ 
 
     componentDidMount() {
         this.props.getItems();
@@ -40,13 +47,15 @@ class MainPage extends Component {
 
     render() {
         const { items } = this.props;
+        const { searchText } = this.state;
+        const newItems  = items.filter(item =>item.inputText.indexOf(searchText)>-1)
         let column1;
         let column2;
-        column1 = (items.filter(item => item.columnNum === "1").map(item =>(
-                <li key={item._id}>{item.inputText}</li>)))
+        column1 = (newItems.filter(item => item.columnNum === "1").map(item =>(
+                <li key={item._id}>{item.inputText}<button onClick={()=>this.delete(item._id,item.inputText, "1")}>x</button></li>)))
        
-        column2 = (items.filter(item => item.columnNum === "2").map(item =>(
-            <li key={item._id}>{item.inputText}</li>
+        column2 = (newItems.filter(item => item.columnNum === "2").map(item =>(
+            <li key={item._id}>{item.inputText}<button onClick={()=>this.delete(item._id,item.inputText, "2")}>x</button></li>
 
         )))
                 
@@ -76,7 +85,7 @@ class MainPage extends Component {
                             </div>
                             <button type="submit" className="btn">ADD ITEM</button>
                         </form>
-                        <form onSubmit={this.searchSubmit}>
+                        <form >
                             <div className="form-group">
                                 <label className="search-label" htmlFor="searchItem">Search an Item</label>
                                 <div className="submit-container">
@@ -118,7 +127,8 @@ class MainPage extends Component {
 }
 
 const mapStateToProps = state => ({
-    items: state.items
+    items: state.items,
+    
 })
 
-export default connect(mapStateToProps, { addItem, getItems })(MainPage)
+export default connect(mapStateToProps, { addItem, getItems,delItem,addLog})(MainPage)

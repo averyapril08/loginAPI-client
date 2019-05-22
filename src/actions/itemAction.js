@@ -1,4 +1,4 @@
-import {ADD_ITEM,GET_ITEMS} from './types';
+import {ADD_ITEM,GET_ITEMS,DELETE_ITEMS} from './types';
 import axios from 'axios';
 
 export const getItems = () => dispatch => {
@@ -20,4 +20,17 @@ export const addItem = item => dispatch => {
             payload:res.data
         })
         )
+        
+}
+
+export const delItem = id => dispatch => {
+  axios.delete(`/api/items/${id}`)
+       .then(res =>{
+         
+        dispatch({
+         type:DELETE_ITEMS,
+          payload:id
+
+       })
+      })
 }
